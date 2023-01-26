@@ -18,6 +18,7 @@
     button[type="submit"]:hover 
     {
         background-color: #45a049
+    }
     <meta name="viewport" content=""width=device-width, initial-scale=1">
     <html>
       <head>
@@ -32,6 +33,7 @@
           <script src="WebGL.js"></script>
           <script src="index.js"></script>
           <link rel="stylesheet" type="text/css" href="styles.css">
+          
       </head>
    
     
@@ -55,34 +57,8 @@
             /* Position main sphere at [0, 0, 0]*/
             mainSphereMesh.position.set(0, 0, 0)
 
-            /* Create the 4 orbiting smaller spheres*/
-            let smallSphere1 = new THREE.SphereGeometry(10, 32, 32)
-            let smallSphereMaterial1 = new THREE.MeshBasicMaterial(color: 0x00ff00)
-            let smallSphereMesh1 = new THREE.Mesh(smallSphere1, smallSphereMaterial1)
-            smallSphereMesh1.position.set(100, 0, 0)
-
-            let smallSphere2 = new THREE.SphereGeometry(10, 32, 32)
-            let smallSphereMaterial2 = new THREE.MeshBasicMaterial(color: 0x00ff00)
-            let smallSphereMesh2 = new THREE.Mesh(smallSphere2, smallSphereMaterial2)
-            smallSphereMesh2.position.set(-100, 0, 0)
-
-            let smallSphere3 = new THREE.SphereGeometry(10, 32, 32)
-            let smallSphereMaterial
-
-
-              let smallSphereMesh3 = new THREE.Mesh(smallSphere3, smallSphereMaterial3)
-              smallSphereMesh3.position.set(0, 100, 0)
-
-              let smallSphere4 = new THREE.SphereGeometry(10, 32, 32)
-              let smallSphereMaterial4 = new THREE.MeshBasicMaterial({color: 0x00ff00})
-              let smallSphereMesh4 = new THREE.Mesh(smallSphere4, smallSphereMaterial4)
-              smallSphereMesh4.position.set(0, -100, 0)
-
-              /* Add the small spheres to the main sphere*/
-              mainSphereMesh.add(smallSphereMesh1)
-              mainSphereMesh.add(smallSphereMesh2)
-              mainSphereMesh.add(smallSphereMesh3)
-              mainSphereMesh.add(smallSphereMesh4)
+            /* Create the small spheres*/
+            //TODO: Add small spheres to the scene
 
               /* Create the scene*/
               let scene = new THREE.Scene()
@@ -92,22 +68,15 @@
 
               // Create the camera
               let camera = new THREE.PerspectiveCamera(75, canvas.width / canvas.height, 0.1, 1000);
-
-              // Position the camera by calculating the mean of the 3D positions of the user's eyes
-              camera.position.set(
-                (userEye1Position.x + userEye2Position.x) / 2,
-                (userEye1Position.y + userEye2Position.y) / 2,
-                (userEye1Position.z + userEye2
-
-
-              /* Position the camera by calculating the mean of the 3D positions of the user's eyes*/
+     // Update the camera position by using opencv.js to calculate the gaze of the viewer and ray tracing to calculate the direction of the gaze
               camera.position.set(
                 (userEye1Position.x + userEye2Position.x) / 2,
                 (userEye1Position.y + userEye2Position.y) / 2,
                 (userEye1Position.z + userEye2Position.z) / 2
-              )i
+                )
 
-              /*Orient the camera by calculating the gaze of the viewer as a directional vector*/
+
+              // Update the camera position by using opencv.js to calculate the gaze of the viewer and ray tracing to calculate the direction of the gaze
               camera.lookAt(
                 new THREE.Vector3(
                   userEye1Position.x - userEye2Position.x,
@@ -116,19 +85,20 @@
                 )
               )
 
-              /* Create the renderer*
+              /* Create the renderer*/
               let renderer = new THREE.WebGLRenderer({ canvas: canvas });
               renderer.setSize(canvas.width, canvas.height);
 
               /*Create the render loop*/
-              let render = function() {
+              let render = function ()
+              {
                 requestAnimationFrame(render);
 
-                // Update the small spheres' positions
-                smallSphereMesh1.position.x += 0.1;
-                smallSphereMesh2.position.x -= 0.1;
-                smallSphereMesh3.position.y += 0.1;
-                smallSphereMesh4.position.y -= 0.1;
+            
+
+                /* Calculate the gaze of the viewer as a directional vector using ray tracing*/
+                let gazeX = (event.clientX / window.innerWidth) * 2 - 1;
+                let gazeY = -(event.clientY / window.innerHeight) * 2 + 1;
 
                 // Render the scene
                 renderer.render(scene, camera);
@@ -137,90 +107,8 @@
 
 
 
-/* Create the render loop*/
-@keyframes renderLoop {
-  0% {
-    transform: translateX(0)
-  }
-  100% {
-    transform: translateX(-100%)
-  }
-}
-/* Crete Render Function
-let render = function() {
-  requestAnimationFrame(render)
-
-  /* Update the small spheres' positions*/
-  smallSphereMesh1.position.x += 0.1
-  smallSphereMesh2.position.x -= 0.1
-  smallSphereMesh3.position.y += 0.1
-  smallSphereMesh4.position.y -= 0.1
-
-  /* Render the scene*/
-  renderer.render(scene, camera)
-}
-
-function nMouseMoveo(event) {
-  /* Calculate the gaze of the viewer
-  let gazeX = (event.clientX / window.innerWidth) * 2 - 1;
-  let gazeY = -(event.clientY / window.innerHeight) * 2 + 1;
-
-  /* Update the camera's position and orientation*/
-  camera.position.set(gazeX, gazeY, camera.position.z)
 
 
-// Update the camera's position and orientation
-camera.position.set(gazeX, gazeY, camera.position.z);
-camera.lookAt(new THREE.Vector3(gazeX, gazeY, 0));
-
-// Update the small spheres' positions
-smallSphereMesh1.position.x += gazeX * 0.01;
-smallSphereMesh2.position.x -= gazeX * 0.01;
-smallSphereMesh3.position.y += gazeY * 0.01;
-smallSphereMesh4.position.y -= gazeY * 0.01;
-}
-
-// Handle key down event
-function onKeyDown(event) {
-switch (event.keyCode) {
-  case 49: // 1
-    // Code to execute when the 1 key is pressed
-    break;
-  case 50: // 2
-    // Code to execute when the 2 key is pressed
-    break;
-  // Add more cases as needed
-}
-}
-
-
-
-}
-
-// Handle key down event
-function onKeyDown(event) {
-  switch (event.keyCode) {
-    case 49: // 1
-      // Code to execute when the 1 key is pressed
-      break;
-    case 50: // 2
-      // Code to execute when the 2 key is pressed
-      break;
-    // Add more cases as needed
-  }
-}
-
-
-
-
-
-var render = function () {
-    requestAnimationFrame(render);
-    // Code to update the scene goes here
-    renderer.render(scene, camera);
-  };
-
-  render();
 </script>
 </body>
 </html>
